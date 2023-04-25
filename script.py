@@ -17,9 +17,14 @@ import paho.mqtt.publish as publish
 
 broker = 'broker.emqx.io'
 
+sub_topic = "stat/mospow3/STATUS10"
+sub_topic2 = "werkdit"
+
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    #client.subscribe(sub_topic)
+    client.subscribe(sub_topic)
+    client.subscribe(sub_topic2)
+    print("subscribed to ..." + sub_topic)
 
 def on_publish(mosq, obj, mid):
     print("mid: " + str(mid))
@@ -32,7 +37,19 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(broker, 1883, 60)
-client.loop()
+client.loop_start()
+
+
+#put in overall while loop 
+# ping the sonoff device for readings
+# write the readings tot the gsheet
 
 for i in range(5):
-    client.publish("vscode", "alive")
+    print ("loop running")
+    client.publish("cmnd/mospow3/STATUS", 10)
+    client.publish("werkdit", "yep")
+    time.sleep(5)
+
+#kind of important to do the loop forever and must be last line
+
+
