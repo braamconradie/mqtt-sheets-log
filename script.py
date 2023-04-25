@@ -11,13 +11,14 @@
 
 # get the spreadsheet
 import gspread
+import json
 import time
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
 broker = 'broker.emqx.io'
 
-sub_topic = "stat/mospow3/STATUS10"
+sub_topic = "stat/mospow2/STATUS10"
 sub_topic2 = "werkdit"
 
 def on_connect(client, userdata, flags, rc):
@@ -31,6 +32,7 @@ def on_publish(mosq, obj, mid):
 
 def on_message(client, userdata, msg):
     message = str(msg.payload)
+    #message = msg.payload
     print(msg.topic+" "+message)
 
 client = mqtt.Client()
@@ -44,9 +46,9 @@ client.loop_start()
 # ping the sonoff device for readings
 # write the readings tot the gsheet
 
-for i in range(5):
+while True:
     print ("loop running")
-    client.publish("cmnd/mospow3/STATUS", 10)
+    client.publish("cmnd/mospow2/STATUS", 10)
     client.publish("werkdit", "yep")
     time.sleep(5)
 
