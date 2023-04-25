@@ -1,20 +1,21 @@
 #need to pip install 
 # pip3 install -r requirements.txt 
 
-# check stuff is working
-# gc = gspread.service_account(filename='credentials.json')
-# sh = gc.open_by_key('1B0plp_7tp5cXrN1ce1JcFG5e9RnLjBSJ-cIeUGS_rcE')
-# worksheet = sh.sheet1 
-# res = worksheet.get_all_records()
-# print(res)
 
 
 # get the spreadsheet
 import gspread
 import json
 import time
+import datetime
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
+
+# set up google sheet
+gc = gspread.service_account(filename='credentials.json')
+sh = gc.open_by_key('1B0plp_7tp5cXrN1ce1JcFG5e9RnLjBSJ-cIeUGS_rcE')
+worksheet = sh.sheet1 
+
 
 broker = 'broker.emqx.io'
 
@@ -45,7 +46,13 @@ def on_message(client, userdata, msg):
     m_in = json.loads(m_decode) #decode json data
     #print(type(m_in))
     voltage = m_in["StatusSNS"]["ENERGY"]["Voltage"]
-    print(voltage)
+    power = m_in["StatusSNS"]["ENERGY"]["Power"]
+    timestamp = str(datetime.datetime.now())
+    print (timestamp)
+    print("Voltage = " + str(voltage) + "  Power = " + str(power))
+    #append spreadsheet - the big moment!
+    body=[timestamp, voltage, power] #the values should be a list
+    worksheet.append_row(body) 
 
 
 
