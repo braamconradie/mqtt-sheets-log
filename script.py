@@ -20,12 +20,11 @@ worksheet = sh.sheet1
 broker = 'broker.emqx.io'
 
 sub_topic = "stat/mospow2/STATUS10"
-sub_topic2 = "werkdit"
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe(sub_topic)
-    client.subscribe(sub_topic2)
     print("subscribed to ..." + sub_topic)
 
 def on_publish(mosq, obj, mid):
@@ -47,24 +46,17 @@ def on_message(client, userdata, msg):
     #print(type(m_in))
     voltage = m_in["StatusSNS"]["ENERGY"]["Voltage"]
     power = m_in["StatusSNS"]["ENERGY"]["Power"]
-    timestamp = str(datetime.datetime.now())
-    print (timestamp)
+    timestamp = int(time.time())
     print("Voltage = " + str(voltage) + "  Power = " + str(power))
     #append spreadsheet - the big moment!
     body=[timestamp, voltage, power] #the values should be a list
     worksheet.append_row(body) 
-
-
-
-
-
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(broker, 1883, 60)
 client.loop_start()
-
 
 #put in overall while loop 
 # ping the sonoff device for readings
@@ -73,9 +65,11 @@ client.loop_start()
 while True:
     print ("loop running")
     client.publish("cmnd/mospow2/STATUS", 10)
+    client.publish("werkdit", "yep")
     # this little bugger below stuffed up my json validation!!!
     #client.publish("werkdit", "yep")
     time.sleep(5)
+
 
 #kind of important to do the loop forever and must be last line
 
