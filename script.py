@@ -5,6 +5,7 @@
 
 # get the spreadsheet
 import gspread
+import requests
 import json
 import time
 import datetime
@@ -51,6 +52,10 @@ def on_message(client, userdata, msg):
     #append spreadsheet - the big moment!
     body=[timestamp, voltage, power] #the values should be a list
     worksheet.append_row(body) 
+    thingspeakcall = "https://api.thingspeak.com/update?api_key=ZIPWDOGJTN68PNDL&field1="+str(voltage)
+    thingspeakcall2 = "https://api.thingspeak.com/update?api_key=ZIPWDOGJTN68PNDL&field1="+str(voltage)+"&field2="+str(power)
+    print (thingspeakcall2)
+    x = requests.get(thingspeakcall2)
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -68,7 +73,7 @@ while True:
     client.publish("werkdit", "yep")
     # this little bugger below stuffed up my json validation!!!
     #client.publish("werkdit", "yep")
-    time.sleep(5)
+    time.sleep(15)
 
 
 #kind of important to do the loop forever and must be last line
