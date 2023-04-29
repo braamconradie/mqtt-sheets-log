@@ -1,8 +1,6 @@
 #need to pip install 
 # pip3 install -r requirements.txt 
 
-
-
 # get the spreadsheet
 import gspread
 import requests
@@ -17,9 +15,7 @@ gc = gspread.service_account(filename='credentials.json')
 sh = gc.open_by_key('1B0plp_7tp5cXrN1ce1JcFG5e9RnLjBSJ-cIeUGS_rcE')
 worksheet = sh.sheet1 
 
-
 broker = 'broker.emqx.io'
-
 sub_topic = "stat/mospow2/STATUS10"
 
 
@@ -30,12 +26,6 @@ def on_connect(client, userdata, flags, rc):
 
 def on_publish(mosq, obj, mid):
     print("mid: " + str(mid))
-
-# def on_message(client, userdata, msg):
-#     message = str(msg.payload)
-#     jsonmsg = json.loads(message)
-#     print (type(jsonmsg))
-#     #print(msg.topic+" "+message)
 
 def on_message(client, userdata, msg):
     topic=msg.topic
@@ -77,5 +67,4 @@ while True:
 
 
 #kind of important to do the loop forever and must be last line
-
 
